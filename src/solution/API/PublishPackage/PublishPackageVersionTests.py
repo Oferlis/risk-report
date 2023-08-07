@@ -1,6 +1,6 @@
 import json
 import unittest
-from PublishPackageVersion import app, load_data, save_data
+from PublishPackage.PublishPackageVersion import app, load_data, save_data
 
 
 class TestPublishPackageAPI(unittest.TestCase):
@@ -32,7 +32,7 @@ class TestPublishPackageAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_get_all_data(self):
-        response = self.app.get('/api/')
+        response = self.app.get('/api/data/')
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.data)
         self.assertEqual(len(data), len(self.sample_data))
@@ -40,7 +40,7 @@ class TestPublishPackageAPI(unittest.TestCase):
     def test_create_data(self):
         new_data = {"PackageName": "Test_add",
                     "PackageManager": "pip", "PackageVersion": "1.1.3"}
-        response = self.app.post('/api/', json=new_data)
+        response = self.app.post('/api/data/', json=new_data)
         self.assertEqual(response.status_code, 201)
         data = json.loads(response.data)
         self.assertEqual(data['message'], 'Data created successfully')
@@ -52,12 +52,12 @@ class TestPublishPackageAPI(unittest.TestCase):
     def test_create_duplicated_data(self):
         new_data = {"PackageName": "Test_dup",
                     "PackageManager": "pip", "PackageVersion": "1.1.3"}
-        response = self.app.post('/api/', json=new_data)
+        response = self.app.post('/api/data/', json=new_data)
         self.assertEqual(response.status_code, 201)
 
         new_data = {"PackageName": "Test_dup",
                     "PackageManager": "pip", "PackageVersion": "1.1.3"}
-        response = self.app.post('/api/', json=new_data)
+        response = self.app.post('/api/data/', json=new_data)
         self.assertEqual(response.status_code, 409)
 
         data = json.loads(response.data)
@@ -70,7 +70,7 @@ class TestPublishPackageAPI(unittest.TestCase):
     def test_create_data_with_invalid_payload(self):
         # Invalid payload with missing 'PackageName' field
         new_data = {"PackageManager": "wrong_name", "PackageVersion": 28}
-        response = self.app.post('/api/', json=new_data)
+        response = self.app.post('/api/data/', json=new_data)
         self.assertEqual(response.status_code, 400)
         data = json.loads(response.data)
         self.assertEqual(data['message'], 'Invalid data')

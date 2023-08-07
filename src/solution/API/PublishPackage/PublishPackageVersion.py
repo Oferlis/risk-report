@@ -40,7 +40,7 @@ def health():
     return jsonify({"message": "Healthy"}), 200
 
 
-@app.route("/api/", methods=["GET"])
+@app.route("/api/data/", methods=["GET"])
 def get_list():
     data = load_data()
     return jsonify(data), 200
@@ -54,7 +54,7 @@ def duplicate_exists(new_data, loaded_data):
     return False
 
 
-@app.route("/api/", methods=["POST"])
+@app.route("/api/data/", methods=["POST"])
 def add_package():
     new_data = request.get_json()
     if "PackageName" in new_data and "PackageManager" in new_data and "PackageVersion" in new_data:

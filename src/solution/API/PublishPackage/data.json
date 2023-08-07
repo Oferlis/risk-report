@@ -1,5 +1,21 @@
 [
     {
+        "PackageManager": "Nuget",
+        "PackageName": "Test",
+        "PackageVersion": [
+            "1.0.0"
+        ]
+    },
+    {
+        "PackageManager": "NPM",
+        "PackageName": "Test2",
+        "PackageVersion": [
+            "1.2.0",
+            "1.4.0",
+            "2.0.0"
+        ]
+    },
+    {
         "PackageManager": "Maven",
         "PackageName": "activemq:activemq-core",
         "PackageVersion": [

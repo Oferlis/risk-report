@@ -52,7 +52,7 @@ class IntegrationTests(unittest.TestCase):
         assert (risk_response.status_code == 200)
 
     def test_report1(self):
-        url = f"{self.pusblishAPI}/api/"
+        url = f"{self.pusblishAPI}/api/data"
         publish_payload = json.dumps({
             "PackageManager": "Maven",
             "PackageName": "activemq:activemq-core",
@@ -100,7 +100,7 @@ class IntegrationTests(unittest.TestCase):
                              expected_response[0]["Remediation"])
 
     def test_report2(self):
-        url = f"{self.pusblishAPI}/api/"
+        url = f"{self.pusblishAPI}/api/data/"
         publish_payload = json.dumps({
             "PackageManager": "Nuget",
             "PackageName": "Microsoft.AspNetCore.Mvc",
