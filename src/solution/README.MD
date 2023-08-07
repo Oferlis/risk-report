@@ -10,6 +10,8 @@ Holds the records for packages and their version.
 The records are written to a file called data.json placed in the root dir, the path can be changed.
 
 ### How to run
+Install the required package listed in the requirement.txt file:
+```pip install -r requirement.txt```
 In the PublishPackage folder, run the command ```python PublishPackageVersion.py```
 The server will run on port 8000 on localhost
 

@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
-import json
+from .helpers import *
 
-db = "./data.json"
+
 app = Flask(__name__)
 
 
@@ -10,29 +10,6 @@ class PackageInfo:
         self.PackageManager = PackageManager
         self.PackageName = PackageName
         self.PackageVersion: list = PackageVersion
-
-
-def load_data() -> [PackageInfo]:
-    try:
-        with open(db, "r") as file:
-            data = json.load(file)
-    except FileNotFoundError:
-        data = []
-    return data
-
-
-def get_package(package_manager, package_name):
-    loaded_data: [PackageInfo] = load_data()
-    data = next((item for item in loaded_data
-                if item["PackageManager"] == package_manager
-                and item["PackageName"] == package_name), None)
-
-    return data
-
-
-def save_data(data):
-    with open(db, "w") as file:
-        json.dump(data, file, indent=4)
 
 
 @app.route("/api/health/", methods=["GET"])
@@ -44,14 +21,6 @@ def health():
 def get_list():
     data = load_data()
     return jsonify(data), 200
-
-
-def duplicate_exists(new_data, loaded_data):
-    for item in loaded_data:
-        if item["PackageManager"] == new_data["PackageManager"]\
-                and item["PackageName"] == new_data["PackageName"]:
-            return True
-    return False
 
 
 @app.route("/api/data/", methods=["POST"])

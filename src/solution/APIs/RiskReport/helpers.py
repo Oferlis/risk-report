@@ -1,15 +1,12 @@
-from flask import Flask, request, jsonify
 import requests
 import json
-
-app = Flask(__name__)
 
 
 def get_package_info_api_url(PackageManager, PackageName, PackageVersion):
     return f"https://api-sca.checkmarx.net/public/packages/{PackageManager}/{PackageName}/versions/{PackageVersion}"
 
 
-def make_package_info_api_call(PackageManager, PackageName, PackageVersion):
+def create_package_info_api_call(PackageManager, PackageName, PackageVersion):
     try:
         url = get_package_info_api_url(
             PackageManager, PackageName, PackageVersion)
@@ -34,9 +31,9 @@ def make_package_info_api_call(PackageManager, PackageName, PackageVersion):
 
 
 def get_metadata(params):
-    return make_package_info_api_call(params["PackageManager"],
-                                      params["PackageName"],
-                                      params["PackageVersion"])
+    return create_package_info_api_call(params["PackageManager"],
+                                        params["PackageName"],
+                                        params["PackageVersion"])
 
 
 def validate_data(request_params):
@@ -116,44 +113,8 @@ def find_remediation(package_details):
         params = {'PackageManager': package_details['PackageManager'],
                   'PackageName': package_details['PackageName'],
                   'PackageVersion': version}
-        if len(get_vul_list(params)) == 0:
+        if len(get_vul_list(params)) == 0 and version != 'e':
             remedy = {"FixVersion": version,
                       "RemediationStatus": "Remediated"}
             break
     return remedy
-
-
-@app.route("/api/health/", methods=["GET"])
-def health():
-    return jsonify({"message": "Healthy"}), 200
-
-
-@app.route("/api/report", methods=["POST"])
-def get_risk_report():
-    parsed_request = request.get_json()
-    response = []
-    for package_details in parsed_request:
-        if validate_data(package_details):
-            package_metadata = get_metadata(package_details)
-            package_vul_list = get_vul_list(package_details)
-
-            if len(package_vul_list) > 0:
-                remediation = find_remediation(package_details)
-
-            # if the vul_list is not empty, get the versions list from publish api,
-            # check the next version and so on
-
-            response.append(build_response(package_details,
-                            package_metadata, package_vul_list, remediation))
-
-    # args: package_manager, package_name, package_version
-    # output:
-    #  1. package metadata from package info API - V
-    #  2. package vulnerabilities from package vulnerabilities API
-    #  3. next version that has no problems
-
-    return jsonify(response), 200
-
-
-if __name__ == "__main__":
-    app.run(debug=True, port=8001)
