@@ -4,13 +4,18 @@ The Project consists of two Flask servers, written in Python:
 1. PublishPackage
 2. RiskReport
 
+
 ## PublishPackage
 Holds the records for packages and their version. 
 The records are written to a file called data.json placed in the root dir, the path can be changed.
 
-## How to run
+### How to run
 In the PublishPackage folder, run the command ```python PublishPackageVersion.py```
 The server will run on port 8000 on localhost
+
+### Running tests
+Navigate to the PublishPackage folder
+run the command ```pytest PublishPackageVersionTests.py```
 
 ### Endpoints:
 
@@ -38,11 +43,18 @@ The request body should be in the following format:
   ]
 ```
 
-## How to run
-In the PublishPackage folder, run the command ```python PublishPackageVersion.py```
-The server will run on port 8000 on localhost
+### How to run
+In the PublishPackage folder, run the command ```python RiskReport.py```
+The server will run on port 8001 on localhost
 
-## Endpoints
+### Running tests
+Navigate to the RiskReport folder
+run the command ```pytest RiskReportTests.py```
+
+### Endpoints
 1. GET /api/health - API health check, should return status 200 on GET.
 2. POST /api/report - will return the detailed report for the packages. 
 
+
+## Running integration tests
+Run both servers, and run the command ```pytest IntegrationTests.py```
