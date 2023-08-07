@@ -1,7 +1,18 @@
 [
     {
-        "PackageManager": "OFER",
-        "PackageVersion": "Lis",
-        "PackageName": "wow"
+        "PackageManager": "Maven",
+        "PackageName": "activemq:activemq-core",
+        "PackageVersion": [
+            "1.4",
+            "1.6"
+        ]
+    },
+    {
+        "PackageManager": "Maven",
+        "PackageName": "activemq:activemq-core",
+        "PackageVersion": [
+            "1.4",
+            "1.6"
+        ]
     }
 ]

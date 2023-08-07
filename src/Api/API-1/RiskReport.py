@@ -87,20 +87,19 @@ def create_vul_request(params):
     return url, payload, headers
 
 
-def build_response(package_details, package_metadata, vul_list):
+def build_response(package_details, package_metadata, vul_list, remediation):
     return {"packageId": package_metadata["packageId"],
             "packageName": package_details["PackageName"],
             "packageManager": package_details["PackageManager"],
             "version": package_metadata["version"],
             "releaseDate": package_metadata["releaseDate"],
             "vulnerabilities": vul_list,
-            "Remediation": {"FixVersion": "",
-                            "RemediationStatus": ""}
+            "Remediation": remediation
             }
 
 
 def get_next_versions(package_details):
-    url = f"http://localhost:8000/api/data/{package_details['PackageManager']}/{package_details['PackageName']}/{package_details['PackagerVersion']}"
+    url = f"http://localhost:8000/api/data/{package_details['PackageManager']}/{package_details['PackageName']}/{package_details['PackageVersion']}"
     try:
         response = requests.request("GET", url, headers={}, data={})
         return response.json()
@@ -117,7 +116,8 @@ def find_remediation(package_details):
                   'PackageName': package_details['PackageName'],
                   'PackageVersion': version}
         if len(get_vul_list(params)) == 0:
-            remedy["fixVersion"] = version
+            remedy = {"FixVersion": version,
+                      "RemediationStatus": "Remediated"}
             break
     return remedy
 

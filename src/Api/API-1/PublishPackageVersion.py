@@ -41,16 +41,26 @@ def get_list():
     return jsonify(data), 200
 
 
+def duplicate_exists(new_data, loaded_data):
+    for item in loaded_data:
+        if item["PackageManager"] == new_data["PackageManager"]\
+                and item["PackageName"] == new_data["PackageName"]:
+            return True
+    return False
+
+
 @app.route("/api/", methods=["POST"])
 def add_package():
     new_data = request.get_json()
     if "PackageName" in new_data and "PackageManager" in new_data and "PackageVersion" in new_data:
         package_info = PackageInfo(
             new_data["PackageManager"], new_data["PackageName"], new_data["PackageVersion"])
+
         loaded_data = load_data()
+        if duplicate_exists(new_data, loaded_data):
+            return jsonify({'message': 'Package already exists'}), 409
         loaded_data.append(package_info.__dict__)
         save_data(loaded_data)
-
         return jsonify({'message': 'Data created successfully'}), 201
     else:
         return jsonify({'message': 'Invalid data'}), 400

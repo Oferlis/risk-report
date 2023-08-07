@@ -1,6 +1,7 @@
 import json
 import unittest
-from RiskReport import app, get_metadata, get_vul_list
+from unittest.mock import patch
+from RiskReport import app, get_metadata, get_vul_list, find_remediation
 
 expected_response = [
     {
@@ -18,11 +19,11 @@ expected_response = [
                 "severity": "High"
             }
         ],
-        # "Remediation":
-        # {
-        #     "FixVersion": "1.6",
-        #     "RemediationStatus": "Remediated"
-        # }
+        "Remediation":
+        {
+            "FixVersion": "1.6",
+            "RemediationStatus": "Remediated"
+        }
     }
 ]
 
@@ -58,7 +59,9 @@ class TestRiskReportAPI(unittest.TestCase):
                 item["published"] and \
                 item["severity"]
 
-    def test_risk_report_post(self):
+    @patch('RiskReport.get_next_versions')
+    def test_risk_report_post(self, mock_get_next_versions):
+        mock_get_next_versions.return_value = ["1.6", "2.0"]
         json_data = [{"PackageManager": "Maven",
                       "PackageName": "activemq:activemq-core",
                       "PackageVersion": "1.4"}]
@@ -76,3 +79,19 @@ class TestRiskReportAPI(unittest.TestCase):
                          expected_response[0]["version"])
         self.assertEqual(data[0]["vulnerabilities"],
                          expected_response[0]["vulnerabilities"])
+        self.assertEqual(data[0]["Remediation"],
+                         expected_response[0]["Remediation"])
+
+    @patch('RiskReport.get_next_versions')
+    def test_find_remediation_with_mock(self, mock_get_next_versions):
+        mock_get_next_versions.return_value = ["1.6", "2.0"]
+
+        package_details = {"PackageManager": "Maven",
+                           "PackageName": "activemq:activemq-core",
+                           "PackageVersion": "1.4"}
+
+        expected_remedy = {"FixVersion": "1.6",
+                           "RemediationStatus": "Remediated"}
+
+        remedy = find_remediation(package_details)
+        self.assertEqual(remedy, expected_remedy)

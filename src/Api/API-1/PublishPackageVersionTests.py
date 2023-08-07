@@ -45,6 +45,24 @@ class TestPublishPackageAPI(unittest.TestCase):
         saved_data = load_data()
         self.assertTrue(new_data in saved_data)
 
+    def test_create_duplicated_data(self):
+        new_data = {"PackageName": "Test_dup",
+                    "PackageManager": "pip", "PackageVersion": "1.1.3"}
+        response = self.app.post('/api/', json=new_data)
+        self.assertEqual(response.status_code, 201)
+
+        new_data = {"PackageName": "Test_dup",
+                    "PackageManager": "pip", "PackageVersion": "1.1.3"}
+        response = self.app.post('/api/', json=new_data)
+        self.assertEqual(response.status_code, 409)
+
+        data = json.loads(response.data)
+        self.assertEqual(data['message'], 'Package already exists')
+
+        # Check if the new data is present in the saved data
+        saved_data = load_data()
+        self.assertTrue(new_data in saved_data)
+
     def test_create_data_with_invalid_payload(self):
         # Invalid payload with missing 'PackageName' field
         new_data = {"PackageManager": "wrong_name", "PackageVersion": 28}
