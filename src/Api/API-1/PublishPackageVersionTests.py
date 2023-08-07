@@ -27,6 +27,10 @@ class TestPublishPackageAPI(unittest.TestCase):
         # Reset the data file to the initial state after each test
         save_data(self.sample_data)
 
+    def test_health_check(self):
+        response = self.app.get('/api/health/')
+        self.assertEqual(response.status_code, 200)
+
     def test_get_all_data(self):
         response = self.app.get('/api/')
         self.assertEqual(response.status_code, 200)
@@ -84,7 +88,7 @@ class TestPublishPackageAPI(unittest.TestCase):
         data = json.loads(response.data)
         self.assertEqual(data['message'], 'Package not found')
 
-    def test_get_next_version(self):
+    def test_get_next_versions(self):
         response = self.app.get('/api/data/NPM/Test2/1.2.0/')
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.data)

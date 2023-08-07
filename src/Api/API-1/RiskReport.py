@@ -102,6 +102,8 @@ def get_next_versions(package_details):
     url = f"http://localhost:8000/api/data/{package_details['PackageManager']}/{package_details['PackageName']}/{package_details['PackageVersion']}"
     try:
         response = requests.request("GET", url, headers={}, data={})
+        if response.status_code != 200:
+            return None
         return response.json()
     except requests.exceptions.RequestException as e:
         return "error fetching next version"
@@ -109,7 +111,7 @@ def get_next_versions(package_details):
 
 def find_remediation(package_details):
     next_versions = get_next_versions(package_details)
-    remedy = {"RemediationStatus": "NoRemediationExists"}
+    remedy = {"RemediationStatus": "NoRemediationExist"}
 
     for version in next_versions:
         params = {'PackageManager': package_details['PackageManager'],
@@ -122,7 +124,12 @@ def find_remediation(package_details):
     return remedy
 
 
-@app.route("/api/", methods=["POST"])
+@app.route("/api/health/", methods=["GET"])
+def health():
+    return jsonify({"message": "Healthy"}), 200
+
+
+@app.route("/api/report", methods=["POST"])
 def get_risk_report():
     parsed_request = request.get_json()
     response = []

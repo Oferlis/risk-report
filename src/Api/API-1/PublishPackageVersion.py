@@ -35,6 +35,11 @@ def save_data(data):
         json.dump(data, file, indent=4)
 
 
+@app.route("/api/health/", methods=["GET"])
+def health():
+    return jsonify({"message": "Healthy"}), 200
+
+
 @app.route("/api/", methods=["GET"])
 def get_list():
     data = load_data()

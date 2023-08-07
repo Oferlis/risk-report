@@ -35,6 +35,10 @@ class TestRiskReportAPI(unittest.TestCase):
         self.app = app.test_client()
         self.app.testing = True
 
+    def test_health_check(self):
+        response = self.app.get('/api/health/')
+        self.assertEqual(response.status_code, 200)
+
     def test_get_metadata(self):
         params = {"PackageManager": "Python",
                   "PackageName": "requests", "PackageVersion": "1.0.0"}
@@ -64,23 +68,27 @@ class TestRiskReportAPI(unittest.TestCase):
         mock_get_next_versions.return_value = ["1.6", "2.0"]
         json_data = [{"PackageManager": "Maven",
                       "PackageName": "activemq:activemq-core",
+                      "PackageVersion": "1.4"},
+                     {"PackageManager": "Maven",
+                      "PackageName": "activemq:activemq-core",
                       "PackageVersion": "1.4"}]
-        response = self.app.post('/api/', json=json_data)
+        response = self.app.post('/api/report', json=json_data)
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.data)
 
-        self.assertEqual(data[0]["packageId"],
-                         expected_response[0]["packageId"])
-        self.assertEqual(data[0]["packageName"],
-                         expected_response[0]["packageName"])
-        self.assertEqual(data[0]["packageManager"],
-                         expected_response[0]["packageManager"])
-        self.assertEqual(data[0]["version"],
-                         expected_response[0]["version"])
-        self.assertEqual(data[0]["vulnerabilities"],
-                         expected_response[0]["vulnerabilities"])
-        self.assertEqual(data[0]["Remediation"],
-                         expected_response[0]["Remediation"])
+        for data_item in data:
+            self.assertEqual(data_item["packageId"],
+                             expected_response[0]["packageId"])
+            self.assertEqual(data_item["packageName"],
+                             expected_response[0]["packageName"])
+            self.assertEqual(data_item["packageManager"],
+                             expected_response[0]["packageManager"])
+            self.assertEqual(data_item["version"],
+                             expected_response[0]["version"])
+            self.assertEqual(data_item["vulnerabilities"],
+                             expected_response[0]["vulnerabilities"])
+            self.assertEqual(data_item["Remediation"],
+                             expected_response[0]["Remediation"])
 
     @patch('RiskReport.get_next_versions')
     def test_find_remediation_with_mock(self, mock_get_next_versions):
