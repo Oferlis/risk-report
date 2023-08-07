@@ -99,10 +99,27 @@ def build_response(package_details, package_metadata, vul_list):
             }
 
 
-def find_remediation(package_details):
+def get_next_versions(package_details):
     url = f"http://localhost:8000/api/data/{package_details['PackageManager']}/{package_details['PackageName']}/{package_details['PackagerVersion']}"
-    response = requests.request("GET", url, headers={}, data={})
-    return response.json()
+    try:
+        response = requests.request("GET", url, headers={}, data={})
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        return "error fetching next version"
+
+
+def find_remediation(package_details):
+    next_versions = get_next_versions(package_details)
+    remedy = {"RemediationStatus": "NoRemediationExists"}
+
+    for version in next_versions:
+        params = {'PackageManager': package_details['PackageManager'],
+                  'PackageName': package_details['PackageName'],
+                  'PackageVersion': version}
+        if len(get_vul_list(params)) == 0:
+            remedy["fixVersion"] = version
+            break
+    return remedy
 
 
 @app.route("/api/", methods=["POST"])
