@@ -137,3 +137,29 @@ class IntegrationTests(unittest.TestCase):
                              "1.0.4")
             self.assertEqual(data_item["Remediation"]["RemediationStatus"],
                              "Remediated")
+
+    def test_report3(self):
+        headers = {
+            'Content-Type': 'application/json'
+        }
+        risk_url = f"{self.riskReportAPI}/api/report"
+
+        risk_payload = json.dumps([
+            {
+                "PackageManager": "Nuget",
+                "PackageName": "Microsoft.AspNetCore.Mvc",
+                "PackageVersion": "1.1.1"
+            }
+        ])
+
+        response = requests.request(
+            "POST", risk_url, headers=headers, data=risk_payload)
+        self.assertEqual(response.status_code, 200)
+
+        data = json.loads(response.text)
+
+        for data_item in data:
+            self.assertEqual(data_item["Remediation"]["FixVersion"],
+                             "1.1.3")
+            self.assertEqual(data_item["Remediation"]["RemediationStatus"],
+                             "Remediated")
