@@ -27,8 +27,8 @@ run the command ```pytest PublishPackageVersionTests.py```
      'PackageName': 'Microsoft.AspNetCore.Mvc',
      'PackageVersion': ['1.0.0'....]}
     ```
-4. GET /api/data/package_manager>/package_name>/ - returns a specific package info
-5. GET /api/data/package_manager>/package_name>/package_version>/ - returns a list of the next version from the specified version 
+4. GET /api/data/package_manager/package_name/ - returns a specific package info
+5. GET /api/data/package_manager/package_name/package_version/ - returns a list of the next version from the specified version 
 
 ## RiskReport
 When passing the API a list of packages, it will return a report for each package with its metadata, vulnerabilities and the next package version that solve the vulnerabilities, if exists.
