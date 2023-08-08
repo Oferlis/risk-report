@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from .helpers import *
+from helpers import *
 
 
 app = Flask(__name__)
@@ -30,12 +30,8 @@ def add_package():
         package_info = PackageInfo(
             new_data["PackageManager"], new_data["PackageName"], new_data["PackageVersion"])
 
-        loaded_data = load_data()
-        if duplicate_exists(new_data, loaded_data):
-            return jsonify({'message': 'Package already exists'}), 409
-        loaded_data.append(package_info.__dict__)
-        save_data(loaded_data)
-        return jsonify({'message': 'Data created successfully'}), 201
+        msg, status = handle_new_data(package_info)
+        return jsonify(msg), status
     else:
         return jsonify({'message': 'Invalid data'}), 400
 
@@ -51,15 +47,12 @@ def get_specific_package(package_manager, package_name):
 
 @app.route("/api/data/<string:package_manager>/<string:package_name>/<string:package_version>/", methods=["GET"])
 def get_next_versions(package_manager, package_name, package_version):
-    # return a list of next versions
     data = get_package(package_manager, package_name)
-    if data:
-        versions = data["PackageVersion"]
-        current_version_idx = versions.index(package_version)
 
-        if len(versions) > (current_version_idx + 1):
-            return jsonify(versions[current_version_idx + 1:]), 200
-        return jsonify({'message': 'Next versions not found'}), 404
+    if data:
+        msg, status = find_next_versions(data, package_version)
+        return jsonify(msg), status
+
     return jsonify({'message': 'Invalid path'}), 500
 
 

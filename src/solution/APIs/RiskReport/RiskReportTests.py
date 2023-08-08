@@ -63,7 +63,7 @@ class TestRiskReportAPI(unittest.TestCase):
                 item["published"] and \
                 item["severity"]
 
-    @patch('RiskReport.helpers.get_next_versions')
+    @patch('helpers.get_next_versions')
     def test_risk_report_post(self, mock_get_next_versions):
         mock_get_next_versions.return_value = ["1.6", "2.0"]
         json_data = [{"PackageManager": "Maven",
@@ -90,7 +90,7 @@ class TestRiskReportAPI(unittest.TestCase):
             self.assertEqual(data_item["Remediation"],
                              expected_response[0]["Remediation"])
 
-    @patch('RiskReport.helpers.get_next_versions')
+    @patch('helpers.get_next_versions')
     def test_find_remediation_with_mock(self, mock_get_next_versions):
         mock_get_next_versions.return_value = ["1.6", "2.0"]
 

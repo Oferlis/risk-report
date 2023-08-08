@@ -17,7 +17,7 @@ The server will run on port 8000 on localhost
 
 ### Running tests
 Navigate to the PublishPackage folder
-run the command ```pytest PublishPackageVersionTests.py```
+run the command ```python -m pytest PublishPackageVersionTests.py```
 
 ### Endpoints:
 
@@ -51,7 +51,7 @@ The server will run on port 8001 on localhost
 
 ### Running tests
 Navigate to the RiskReport folder
-run the command ```pytest RiskReportTests.py```
+run the command ```python -m pytest RiskReportTests.py```
 
 ### Endpoints
 1. GET /api/health - API health check, should return status 200 on GET.
@@ -59,4 +59,4 @@ run the command ```pytest RiskReportTests.py```
 
 
 ## Running integration tests
-Run both servers, and run the command ```pytest IntegrationTests.py```
+Run both servers, and run the command ```python -m pytest IntegrationTests.py```
